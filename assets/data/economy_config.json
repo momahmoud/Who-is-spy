@@ -1,0 +1,76 @@
+{
+  "default_variant": "A",
+  "variants": {
+    "A": {
+      "starting_coins": 25,
+      "coins_per_round": 5,
+      "coins_per_rewarded_ad": 50,
+      "category_rent_cost": 150,
+      "rental_duration_hours": 2,
+      "interstitial_enabled": true,
+      "vip_coin_bonus_percent": 50,
+      "vip_free_category_rentals": false,
+
+      "interstitial_policy": {
+        "min_sessions_before_first_interstitial": 2,
+        "min_rounds_since_install": 2,
+        "cooldown_seconds_between_interstitials": 120
+      },
+
+      "hints": {
+        "reveal_category_cost": 15,
+        "remove_wrong_player_cost": 20,
+        "highlight_suspicious_player_cost": 12
+      },
+
+      "boosts": {
+        "double_next_round_coin_cost": 25,
+        "double_next_round_also_available_via_rewarded": true
+      },
+
+      "quick_unlock": {
+        "temp_category_unlock_coin_cost_flat": 30,
+        "temp_unlock_duration_hours_override": null
+      },
+
+      "daily_rewards": {
+        "streak_coin_amounts": [10, 20, 30, 50],
+        "day4_is_bonus_claim_x2_previous": false,
+        "streak_restore_rewarded_only": true
+      },
+
+      "first_launch_offer": {
+        "free_coins_via_rewarded_amount": 100,
+        "starter_pack_product_id": "salfah.starter_pack",
+        "starter_pack_coins_award": 250,
+        "show_starter_pack_button": false
+      },
+
+      "viral_bonus": {
+        "min_players_for_lobby_bonus": 3,
+        "lobby_bonus_coins": 3,
+        "multi_round_bonus_every_n_rounds": 4,
+        "multi_round_bonus_coins": 5
+      },
+
+      "invite_placeholder": {
+        "enabled": false,
+        "reward_coins": 10
+      }
+    },
+    "B": {
+      "coins_per_rewarded_ad": 30,
+      "coins_per_round": 8,
+      "interstitial_policy": {
+        "cooldown_seconds_between_interstitials": 180
+      }
+    },
+    "C": {
+      "coins_per_rewarded_ad": 40,
+      "starting_coins": 40,
+      "interstitial_policy": {
+        "cooldown_seconds_between_interstitials": 90
+      }
+    }
+  }
+}

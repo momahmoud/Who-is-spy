@@ -1,0 +1,223 @@
+name: salfah
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.4+4
+
+environment:
+  sdk: ^3.11.0
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  #adapting screen and font size
+  flutter_screenutil: ^5.9.3
+
+  # An SVG rendering
+  flutter_svg: ^2.0.14
+
+  # Used to make HTTP requests
+  dio: ^5.3.3
+
+  # Dio interceptor that logs network calls in a pretty, easy to read format
+  pretty_dio_logger: ^1.3.1
+
+  # extensible logger which prints beautiful logs.
+  logger: ^2.5.0
+
+  #Loading animation
+  flutter_spinkit: ^5.2.1
+
+  #Statemanagement
+  flutter_hooks: ^0.21.3+1
+
+  # toast notifications
+  toastification: ^3.0.3
+
+  # widget can help you bring simple yet beautiful skeleton loaders
+  shimmer_animation: ^2.2.2+1
+
+  # A package for creating dynamic forms in your Flutter app.
+  flutter_form_builder: ^10.2.0
+
+  # internationalized/localized messages, date and number formatting and parsing
+  intl: ^0.20.2
+
+  # Multiple results for dart. Inspired by dartz's Either and Kotlin's sealed classes
+  multiple_result: ^5.1.0
+
+  # for splash screen
+  flutter_native_splash: ^2.4.3
+
+  # package for prompting users to upgrade when there is a newer version of the app in the store
+  upgrader: ^12.5.0
+
+  # animated effects & builders in Flutter, via an easy, customizable
+  flutter_animate: ^4.5.2
+
+  # Easily create toast messages
+  fluttertoast: ^9.0.0
+
+  # Hive is a lightweight and fast NoSQL database for storing data locally on the device.
+  hive_ce: ^2.13.2
+
+  # hive_flutter is a plugin that provides integration between Hive and Flutter.
+  hive_ce_flutter: ^2.3.2
+
+  # Dart package that helps to implement value based equality without needing to explicitly override == and hashCode
+  equatable: ^2.0.7
+
+  # Easily add staggered animations to your ListView, GridView, Column and Row children as shown in Material Design guidelines
+  flutter_staggered_animations: ^1.1.1
+
+  # Injectable Generator is a generator for injectable.
+  injectable_generator: ^2.8.1
+
+  # Dependency Injection service locator
+  injectable: ^2.5.1
+
+  # Main Statemanagement
+  get: ^4.7.3
+
+  # plugin to play multiple audio files simultaneously
+  audioplayers: ^6.5.1
+
+  # direct Service Locator that allows to decouple the interface from a concrete
+  get_it: ^9.2.0
+
+  # plugin for Google Mobile Ads, supporting banner, interstitial (full-screen), rewarded and native ads
+  google_mobile_ads: ^7.0.0
+
+  # Load .env for ad IDs and config
+  flutter_dotenv: ^6.0.0
+
+  # In-app purchases (iOS App Store, Android Play Store)
+  in_app_purchase: ^3.2.3
+
+  # Local storage for premium status
+  shared_preferences: ^2.2.2
+
+  # Local notifications
+  flutter_local_notifications: ^21.0.0
+
+  # Timezone support for notification scheduling
+  timezone: ^0.11.0
+
+  # Open store for rating, URLs
+  url_launcher: ^6.2.5
+
+  # Share app
+  share_plus: ^10.1.4
+
+  # Rate app prompting
+  rate_my_app: ^2.3.2
+
+  # Icons for settings
+  font_awesome_flutter: ^10.7.0
+
+dev_dependencies:
+  # Build Runner is a package that provides a concrete way of generating files using Dart code, outside of tools like pub and the Dart VM.
+  # Use the below command to generate files:
+  # `dart run build_runner build --delete-conflicting-outputs`
+  build_runner: ^2.4.13
+
+  flutter_launcher_icons: ^0.14.1
+
+  # Extension for Hive. Automatically generates TypeAdapters to store any class.
+  hive_ce_generator: ^1.8.1
+
+  flutter_test:
+    sdk: flutter
+
+  # `dart run intl_utils:generate`
+  intl_utils: ^2.8.7
+
+  flutter_lints: ^6.0.0
+
+  change_app_package_name: ^1.4.0
+
+  # Lint rules for Dart and Flutter used internally at Very Good Ventures.
+  very_good_analysis: ^10.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
+    - assets/images/
+    - assets/images/categories/
+    - assets/sound/
+    - assets/data/
+    - assets/data/ar/
+    - assets/data/en/
+
+  fonts:
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree/Figtree-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Figtree/Figtree-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Figtree/Figtree-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Figtree/Figtree-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Figtree/Figtree-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Figtree/Figtree-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Figtree/Figtree-Black.ttf
+          weight: 900
+
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/Almarai/Almarai-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Almarai/Almarai-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Almarai/Almarai-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Almarai/Almarai-ExtraBold.ttf
+          weight: 800
+
+    - family: ElMessiri
+      fonts:
+        - asset: assets/fonts/El_Messiri/ElMessiri-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/El_Messiri/ElMessiri-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/El_Messiri/ElMessiri-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/El_Messiri/ElMessiri-Bold.ttf
+          weight: 700
+
+flutter_intl:
+  enabled: true
+  arb_dir: lib/core/localization/l10n
+  output_dir: lib/core/localization/generated
+  class_name: AppLocalization
+  main_locale: ar
+  synthetic-package: false
