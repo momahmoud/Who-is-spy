@@ -3,14 +3,11 @@ import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/assets/app_images.dart';
 import 'package:salfah/core/config/economy_config.dart';
 import 'package:salfah/core/const/const_strings.dart';
-import 'package:salfah/core/localization/generated/l10n.dart';
 import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/features/ads/presentation/controller/coins_controller.dart';
 import 'package:salfah/features/ads/services/ads_service.dart';
 import 'package:salfah/features/home/data/models/category_model.dart';
 import 'package:salfah/features/home/presentation/controller/home_controller.dart';
-import 'package:salfah/features/monetization/services/monetization_analytics_service.dart';
-import 'package:salfah/features/monetization/services/monetization_perk_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -317,104 +314,6 @@ class UnlockDialog extends StatelessWidget {
             ),
           ),
         ).animate().slideY(begin: 0.2, duration: 400.ms, curve: Curves.easeOutQuart),
-
-        SizedBox(height: 16.h),
-
-        Text(
-          context.localization.monetizationQuickUnlockHours(
-            economy.quickUnlockDurationHours,
-          ),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.75),
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: balance >= economy.quickTempUnlockCoinCostFlat
-                    ? () async {
-                        final AppLocalization l = context.localization;
-                        final bool spent =
-                            await MonetizationPerkService.tryQuickTemporaryUnlockSpend(
-                          category.id,
-                        );
-                        if (!spent || !context.mounted) return;
-                        final HomeController hc = Get.find<HomeController>();
-                        await hc.grantTimedCategoryRental(
-                          category.id,
-                          economy.quickUnlockDurationMs,
-                        );
-                        if (!context.mounted) return;
-                        MonetizationAnalyticsService.logCategoryRented(
-                          viaCoins: true,
-                          categoryId: category.id,
-                        );
-                        Get
-                          ..back<void>()
-                          ..snackbar(
-                            l.success,
-                            l.categoryRented,
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: AppColors.color2,
-                            colorText: Colors.white,
-                          );
-                        onCoinsAdded();
-                      }
-                    : null,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
-                ),
-                child: Text(
-                  context.localization.monetizationCoinAmountCoins(
-                    economy.quickTempUnlockCoinCostFlat,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () async {
-                  final AppLocalization l = context.localization;
-                  final bool earned = await Get.find<AdsService>().showRewardedAd(
-                    placement: 'quick_temp_unlock_category',
-                  );
-                  if (!earned || !context.mounted) return;
-                  final HomeController hc = Get.find<HomeController>();
-                  await hc.grantTimedCategoryRental(
-                    category.id,
-                    economy.quickUnlockDurationMs,
-                  );
-                  if (!context.mounted) return;
-                  MonetizationAnalyticsService.logCategoryRented(
-                    viaCoins: false,
-                    categoryId: category.id,
-                  );
-                  Get
-                    ..back<void>()
-                    ..snackbar(
-                      l.success,
-                      l.categoryRented,
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: AppColors.color2,
-                      colorText: Colors.white,
-                    );
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
-                ),
-                child: Text(context.localization.monetizationQuickUnlockWithAd),
-              ),
-            ),
-          ],
-        ),
 
         SizedBox(height: 16.h),
 

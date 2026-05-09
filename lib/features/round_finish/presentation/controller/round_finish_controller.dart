@@ -12,6 +12,7 @@ import 'package:salfah/features/ads/presentation/controller/coins_controller.dar
 import 'package:salfah/features/ads/services/ads_service.dart';
 import 'package:salfah/features/monetization/services/interstitial_policy_service.dart';
 import 'package:salfah/features/monetization/services/monetization_bonus_service.dart';
+import 'package:salfah/features/notifications/services/notification_service.dart';
 import 'package:salfah/features/rating/services/rating_prompt_service.dart';
 import 'package:get/get.dart';
 
@@ -86,6 +87,11 @@ class RoundFinishController extends GetxController {
       config.coinsPerRound,
       reason: 'round_finish',
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(
+        NotificationService.instance.requestNotificationPermissionIfDenied(),
+      );
+    });
   }
 
   /// Called when user taps Next on results. Shows interstitial then end-of-round view.

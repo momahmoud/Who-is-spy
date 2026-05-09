@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/config/economy_config.dart';
 import 'package:salfah/features/monetization/services/daily_reward_service.dart';
 import 'package:salfah/features/monetization/services/first_launch_offer_prefs.dart';
@@ -48,13 +49,12 @@ abstract final class MonetizationHomeCoordinator {
 
     await DailyRewardService.rebuildRestoreOfferFromCalendar();
     final bool canDaily = await DailyRewardService.canShowClaimDialogToday();
-    final bool restore = await DailyRewardService.shouldOfferRestore();
-    if ((canDaily || restore) && ctx.mounted) {
+    if (canDaily && ctx.mounted) {
       await showDialog<void>(
         context: ctx,
         barrierDismissible: true,
-        builder: (_) =>
-            DailyRewardDialog(economy: econ),
+        barrierColor: AppColors.primary.withValues(alpha: 0.72),
+        builder: (_) => DailyRewardDialog(economy: econ),
       );
     }
   }

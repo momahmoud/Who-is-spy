@@ -135,7 +135,11 @@ abstract final class DailyRewardService {
     final SharedPreferences p = await SharedPreferences.getInstance();
     final String? last = p.getString(_lastClaimYmdKey);
     final String todayYmd = _ymd(DateTime.now());
-    if (last == null || last.isEmpty || last == todayYmd) {
+    if (last == null || last.isEmpty) {
+      return;
+    }
+    if (last == todayYmd) {
+      await p.remove(_restoreTargetKey);
       return;
     }
     final int gap = _calendarDaysBetween(_parseYmd(last), DateTime.now());

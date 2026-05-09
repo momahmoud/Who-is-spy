@@ -3,7 +3,9 @@ import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/assets/app_images.dart';
 import 'package:salfah/core/common_widgets/animated_play_button.dart';
 import 'package:salfah/core/common_widgets/background_image_widget.dart';
+import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/features/intro/presentation/dialogs/about_app_alert_dialog.dart';
+import 'package:salfah/features/settings/presentation/widgets/how_to_play_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -74,7 +76,7 @@ class _IntroBodyState extends State<IntroBody>
                 ),
               ),
 
-              // About/Info Icon - Top Right
+              // About / info — top right
               Positioned(
                 top: 16,
                 right: 16,
@@ -97,6 +99,27 @@ class _IntroBodyState extends State<IntroBody>
                       ),
                       AnimatedPlayButton(
                         onTap: () => Get.offAllNamed<void>(RouteNames.home),
+                      ),
+                      SizedBox(height: 12.h),
+                      TextButton(
+                        onPressed: () => _showHowToPlayDialog(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white.withValues(alpha: 0.92),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                        ),
+                        child: Text(
+                          context.localization.howToPlayTitle,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor:
+                                Colors.white.withValues(alpha: 0.55),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -188,6 +211,27 @@ class _IntroBodyState extends State<IntroBody>
       barrierLabel: '',
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, _, _) => const AboutAppAlertDialog(),
+      transitionBuilder: (
+        BuildContext context,
+        Animation<double> anim1,
+        Animation<double> anim2,
+        Widget child,
+      ) {
+        return Transform.scale(
+          scale: Curves.easeInOutBack.transform(anim1.value),
+          child: FadeTransition(opacity: anim1, child: child),
+        );
+      },
+    );
+  }
+
+  void _showHowToPlayDialog(BuildContext context) {
+    showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (_, _, _) => const HowToPlayDialog(),
       transitionBuilder: (
         BuildContext context,
         Animation<double> anim1,

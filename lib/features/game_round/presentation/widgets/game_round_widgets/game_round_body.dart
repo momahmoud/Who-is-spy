@@ -1,9 +1,7 @@
 import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/common_widgets/background_image_widget.dart';
-import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/features/game_round/presentation/controllers/game_round_controller.dart';
 import 'package:salfah/features/game_round/presentation/widgets/game_round_widgets/index.dart';
-import 'package:salfah/features/monetization/rewards/presentation/game_round_perks_sheet.dart';
 import 'package:flutter/material.dart';
 
 class GameRoundBody extends StatelessWidget {
@@ -53,25 +51,6 @@ class GameRoundBody extends StatelessWidget {
         if (!controller.vote &&
             (!controller.showBraSalfa || controller.timerFinish))
           NextActionButton(controller: controller),
-
-        PositionedDirectional(
-          top: MediaQuery.paddingOf(context).top + 4,
-          end: 4,
-          child: Material(
-            color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(22),
-            child: IconButton(
-              tooltip: context.localization.monetizationGameRoundPerksTooltip,
-              icon: Icon(
-                Icons.auto_awesome_rounded,
-                color: Colors.white.withValues(alpha: 0.9),
-              ),
-              onPressed: () {
-                showGameRoundPerksSheet(context, controller);
-              },
-            ),
-          ),
-        ),
       ],
     );
   }

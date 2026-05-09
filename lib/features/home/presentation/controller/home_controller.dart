@@ -129,7 +129,10 @@ class HomeController extends GetxController {
   }
 
   /// Grants a rental window without spending coins (used by quick-unlock / perks).
-  Future<void> grantTimedCategoryRental(String categoryId, int durationMs) async {
+  Future<void> grantTimedCategoryRental(
+    String categoryId,
+    int durationMs,
+  ) async {
     await _addRental(categoryId, durationMs);
     await _loadData();
   }
@@ -154,8 +157,9 @@ class HomeController extends GetxController {
   }
 
   void onCategoryPressed(String categoryKey) {
-    final CategoryModel category =
-        categories.firstWhere((CategoryModel c) => c.id == categoryKey);
+    final CategoryModel category = categories.firstWhere(
+      (CategoryModel c) => c.id == categoryKey,
+    );
     if (category.isLocked) {
       showRentDialog(category);
     } else {
@@ -166,10 +170,9 @@ class HomeController extends GetxController {
 
   void showRentDialog(CategoryModel category) {
     Get.dialog<void>(
-      UnlockDialog(category: category).animate().scale(
-            duration: 300.ms,
-            curve: Curves.easeOutBack,
-          ),
+      UnlockDialog(
+        category: category,
+      ).animate().scale(duration: 300.ms, curve: Curves.easeOutBack),
     );
   }
 

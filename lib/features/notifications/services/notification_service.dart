@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 enum NotificationType {
@@ -38,6 +40,9 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   final Random _random = Random();
 
+  bool get _supportsLocalNotifications =>
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
   final Map<NotificationType, List<String>> _messagesByType =
       <NotificationType, List<String>>{
         NotificationType.dailyReminder: <String>[
@@ -66,39 +71,130 @@ class NotificationService {
         ],
       };
 
+  Future<void> _configureLocalTimeZone() async {
+    tzdata.initializeTimeZones();
+    try {
+      final TimezoneInfo info = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(info.identifier));
+    } catch (_) {
+      tz.setLocalLocation(tz.UTC);
+    }
+  }
+
   Future<void> initNotifications() async {
-    if (!Platform.isAndroid) {
+    if (!_supportsLocalNotifications) {
       return;
     }
 
-    tz.initializeTimeZones();
+    await _configureLocalTimeZone();
+
+    const DarwinInitializationSettings darwinSettings =
+        DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
 
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/launcher_icon');
-    const InitializationSettings initSettings =
-        InitializationSettings(android: androidSettings);
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: darwinSettings,
+    );
 
     await _plugin.initialize(settings: initSettings);
 
-    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-        _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+          _plugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
-    await androidPlugin?.requestNotificationsPermission();
+      await androidPlugin?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          _channelId,
+          _channelName,
+          description: _channelDescription,
+          importance: Importance.high,
+          playSound: true,
+        ),
+      );
+    }
+  }
 
-    await androidPlugin?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        _channelId,
-        _channelName,
-        description: _channelDescription,
-        importance: Importance.high,
-        playSound: true,
-      ),
-    );
+  /// Runs after the first frame so Android has an [Activity] for the
+  /// notification permission prompt, then schedules engagement notifications.
+  Future<void> ensurePermissionsAndScheduleEngagementNotifications() async {
+    if (!_supportsLocalNotifications) {
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? android =
+          _plugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      await android?.requestNotificationsPermission();
+    } else if (Platform.isIOS) {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    }
+
+    await handleAppLaunch();
+  }
+
+  /// Prompts for notification permission when the OS reports it is not granted
+  /// yet (e.g. after a round). Reschedules engagement notifications if granted.
+  Future<void> requestNotificationPermissionIfDenied() async {
+    if (!_supportsLocalNotifications) {
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? android =
+          _plugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (android == null) {
+        return;
+      }
+      final bool? enabled = await android.areNotificationsEnabled();
+      if (enabled == true) {
+        return;
+      }
+      await android.requestNotificationsPermission();
+      if (await android.areNotificationsEnabled() == true) {
+        await handleAppLaunch();
+      }
+      return;
+    }
+
+    if (Platform.isIOS) {
+      final IOSFlutterLocalNotificationsPlugin? ios =
+          _plugin.resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      if (ios == null) {
+        return;
+      }
+      final NotificationsEnabledOptions? opts = await ios.checkPermissions();
+      final bool granted = opts != null &&
+          (opts.isEnabled || opts.isProvisionalEnabled) &&
+          opts.isAlertEnabled;
+      if (granted) {
+        return;
+      }
+      final bool? accepted = await ios.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      if (accepted == true) {
+        await handleAppLaunch();
+      }
+    }
   }
 
   Future<void> handleAppLaunch() async {
-    if (!Platform.isAndroid) {
+    if (!_supportsLocalNotifications) {
       return;
     }
 
@@ -131,7 +227,7 @@ class NotificationService {
   }
 
   Future<void> scheduleDailyNotification() async {
-    if (!Platform.isAndroid) {
+    if (!_supportsLocalNotifications) {
       return;
     }
 
@@ -156,7 +252,7 @@ class NotificationService {
   }
 
   Future<void> scheduleInactiveNotification() async {
-    if (!Platform.isAndroid) {
+    if (!_supportsLocalNotifications) {
       return;
     }
 
@@ -214,7 +310,7 @@ class NotificationService {
     String? title,
     String? body,
   }) async {
-    if (!Platform.isAndroid) {
+    if (!_supportsLocalNotifications) {
       return;
     }
 
@@ -251,14 +347,19 @@ class NotificationService {
   }
 
   NotificationDetails _notificationDetails() {
-    return const NotificationDetails(
-      android: AndroidNotificationDetails(
+    return NotificationDetails(
+      android: const AndroidNotificationDetails(
         _channelId,
         _channelName,
         channelDescription: _channelDescription,
         importance: Importance.high,
         priority: Priority.high,
         playSound: true,
+      ),
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
       ),
     );
   }

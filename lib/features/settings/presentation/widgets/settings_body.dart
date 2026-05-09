@@ -3,6 +3,7 @@ import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/features/intro/presentation/dialogs/about_app_alert_dialog.dart';
 import 'package:salfah/features/settings/presentation/controller/settings_controller.dart';
 import 'package:salfah/features/settings/presentation/widgets/donation_options_dialog.dart';
+import 'package:salfah/features/settings/presentation/widgets/how_to_play_dialog.dart';
 import 'package:salfah/features/settings/presentation/widgets/setting_item_widget.dart';
 import 'package:salfah/features/settings/presentation/widgets/setting_section_widget.dart';
 import 'package:salfah/features/settings/services/purchase_service.dart';
@@ -147,6 +148,13 @@ class SettingsBody extends StatelessWidget {
           subtitle: context.localization.tapToRead,
           iconColor: AppColors.color1,
           onTap: () => _showAboutDialog(context),
+        ),
+        SettingItemWidget(
+          icon: Icons.menu_book_rounded,
+          title: context.localization.howToPlayTitle,
+          subtitle: context.localization.tapToRead,
+          iconColor: AppColors.color4,
+          onTap: () => _showHowToPlayDialog(context),
           showBorder: false,
         ),
       ],
@@ -160,6 +168,28 @@ class SettingsBody extends StatelessWidget {
       barrierLabel: '',
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, _, _) => const AboutAppAlertDialog(),
+      transitionBuilder:
+          (
+            BuildContext context,
+            Animation<double> anim1,
+            Animation<double> anim2,
+            Widget child,
+          ) {
+            return Transform.scale(
+              scale: Curves.easeInOutBack.transform(anim1.value),
+              child: FadeTransition(opacity: anim1, child: child),
+            );
+          },
+    );
+  }
+
+  void _showHowToPlayDialog(BuildContext context) {
+    showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (_, _, _) => const HowToPlayDialog(),
       transitionBuilder:
           (
             BuildContext context,

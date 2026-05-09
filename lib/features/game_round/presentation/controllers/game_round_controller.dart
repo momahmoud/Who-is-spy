@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:salfah/config/navigation/route_names.dart';
-import 'package:salfah/features/monetization/services/monetization_perk_hints_store.dart';
 import 'package:get/get.dart';
 
 /// ------------------------------------------------------------
@@ -103,8 +102,6 @@ class GameRoundController extends GetxController {
     /// Shuffle players for randomness
     askedList = players.keys.toList()..shuffle();
     voterList = players.keys.toList()..shuffle();
-
-    unawaited(MonetizationPerkHintsStore.clearForNewRound());
   }
 
   // ==========================================================
@@ -136,7 +133,6 @@ class GameRoundController extends GetxController {
 
     update();
   }
-
 
   // ==========================================================
   // QUESTION PHASE
@@ -255,5 +251,4 @@ class GameRoundController extends GetxController {
       },
     );
   }
-
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +13,7 @@ import '../core/const/const_strings.dart';
 import '../core/localization/generated/l10n.dart';
 import '../core/localization/localization_helper.dart';
 import '../features/monetization/services/monetization_analytics_service.dart';
+import '../features/notifications/services/notification_service.dart';
 import '../features/settings/prestation/controller/setting_controller.dart';
 
 class BarrahAlsalfahMobileApp extends StatefulWidget {
@@ -31,6 +34,13 @@ class _BarrahAlsalfahMobileAppState extends State<BarrahAlsalfahMobileApp>
 
     super.initState();
     _foregroundStarted = DateTime.now();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(
+        NotificationService.instance
+            .ensurePermissionsAndScheduleEngagementNotifications(),
+      );
+    });
   }
 
   final LocalizationController localizationController = Get.put(

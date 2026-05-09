@@ -18,8 +18,10 @@ class AppLocalization {
   static AppLocalization? _current;
 
   static AppLocalization get current {
-    assert(_current != null,
-        'No instance of AppLocalization was loaded. Try to initialize the AppLocalization delegate before accessing AppLocalization.current.');
+    assert(
+      _current != null,
+      'No instance of AppLocalization was loaded. Try to initialize the AppLocalization delegate before accessing AppLocalization.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +43,10 @@ class AppLocalization {
 
   static AppLocalization of(BuildContext context) {
     final instance = AppLocalization.maybeOf(context);
-    assert(instance != null,
-        'No instance of AppLocalization present in the widget tree. Did you add AppLocalization.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of AppLocalization present in the widget tree. Did you add AppLocalization.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,12 +56,7 @@ class AppLocalization {
 
   /// `من الجاسوس؟`
   String get gameTitle {
-    return Intl.message(
-      'من الجاسوس؟',
-      name: 'gameTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('من الجاسوس؟', name: 'gameTitle', desc: '', args: []);
   }
 
   /// `لعبة من الجاسوس لعبة جماعية تعتمد على الذكاء والملاحظة. في كل جولة، يكون واحد من اللاعبين هو الجاسوس بدون ما يعرف كلمة السر، والباقين يعرفون الكلمة. تبدأون تسألون بعض وتتناقشون، وتحاولون تكتشفون الجاسوس. بنفس الوقت، الجاسوس يحاول يفهم الكلمة من كلامكم بدون ما يفضح نفسه.`
@@ -72,19 +71,29 @@ class AppLocalization {
 
   /// `تمام`
   String get understood {
+    return Intl.message('تمام', name: 'understood', desc: '', args: []);
+  }
+
+  /// `عن اللعبة`
+  String get aboutTheGame {
+    return Intl.message('عن اللعبة', name: 'aboutTheGame', desc: '', args: []);
+  }
+
+  /// `كيف تلعب؟`
+  String get howToPlayTitle {
     return Intl.message(
-      'تمام',
-      name: 'understood',
+      'كيف تلعب؟',
+      name: 'howToPlayTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `عن اللعبة`
-  String get aboutTheGame {
+  /// `الهدف\nاكتشفوا مين الجاسوس قبل ما يعرف الكلمة السرية. الجاسوس يحاول يتظاهر إنه يفهم ويستنتج الكلمة من كلامكم.\n\nقبل ما تبدأون\n• من الرئيسية اختاروا تصنيفاً.\n• في شاشة اللاعبين أضيفوا 3 لاعبين على الأقل، عدّلوا الأسماء إذا حابين، ثم اضغطوا «ابدأ اللعب».\n• التطبيق يختار جاسوساً عشوائياً وكلمة سر من التصنيف. كل اللاعبين ما عدا الجاسوس يشوفون الكلمة.\n\nتمرير الجوال\nخلّوا بس اللاعب اللي دوره يشوف الشاشة، ولا تطلعوا على كرت غيركم.\n\nمراحل الجولة\n1) الأدوار — كل واحد يعرف: جاسوس أو داخل السالفة، والكلمة تظهر للي مو جاسوس فقط.\n2) الأسئلة — تسألون وتجاوبون عن السر بالدور. صاغوا أسئلة تفيد فريقكم بدون ما تعطوا الجاسوس الكلمة جاهزة.\n3) التصويت — كل لاعب يصوّت على اللي يظنه الجاسوس.\n4) الكشف والنهاية — يبان مين الجاسوس، بعدها تحاولون تخمّنون الكلمة السرية من عدة خيارات.\n\nالنقاط (شاشة النتيجة)\n• وقت التصويت: إذا صوّيت على الجاسوس الحقيقي، عدادك يزيد نقطة.\n• في نهاية الجولة: إذا تخمين الكلمة صح، عداد الجاسوس يزيد نقطة.\n\nتلميح\nإذا مو أنت الجاسوس، لاحظوا اللي يتهرب من التفاصيل أو يغيّر الموضوع — بس برضه اللاعب البريء ممكن يبان مشبوك!`
+  String get howToPlayBody {
     return Intl.message(
-      'عن اللعبة',
-      name: 'aboutTheGame',
+      'الهدف\nاكتشفوا مين الجاسوس قبل ما يعرف الكلمة السرية. الجاسوس يحاول يتظاهر إنه يفهم ويستنتج الكلمة من كلامكم.\n\nقبل ما تبدأون\n• من الرئيسية اختاروا تصنيفاً.\n• في شاشة اللاعبين أضيفوا 3 لاعبين على الأقل، عدّلوا الأسماء إذا حابين، ثم اضغطوا «ابدأ اللعب».\n• التطبيق يختار جاسوساً عشوائياً وكلمة سر من التصنيف. كل اللاعبين ما عدا الجاسوس يشوفون الكلمة.\n\nتمرير الجوال\nخلّوا بس اللاعب اللي دوره يشوف الشاشة، ولا تطلعوا على كرت غيركم.\n\nمراحل الجولة\n1) الأدوار — كل واحد يعرف: جاسوس أو داخل السالفة، والكلمة تظهر للي مو جاسوس فقط.\n2) الأسئلة — تسألون وتجاوبون عن السر بالدور. صاغوا أسئلة تفيد فريقكم بدون ما تعطوا الجاسوس الكلمة جاهزة.\n3) التصويت — كل لاعب يصوّت على اللي يظنه الجاسوس.\n4) الكشف والنهاية — يبان مين الجاسوس، بعدها تحاولون تخمّنون الكلمة السرية من عدة خيارات.\n\nالنقاط (شاشة النتيجة)\n• وقت التصويت: إذا صوّيت على الجاسوس الحقيقي، عدادك يزيد نقطة.\n• في نهاية الجولة: إذا تخمين الكلمة صح، عداد الجاسوس يزيد نقطة.\n\nتلميح\nإذا مو أنت الجاسوس، لاحظوا اللي يتهرب من التفاصيل أو يغيّر الموضوع — بس برضه اللاعب البريء ممكن يبان مشبوك!',
+      name: 'howToPlayBody',
       desc: '',
       args: [],
     );
@@ -112,12 +121,7 @@ class AppLocalization {
 
   /// `ابدأ اللعب`
   String get startPlaying {
-    return Intl.message(
-      'ابدأ اللعب',
-      name: 'startPlaying',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('ابدأ اللعب', name: 'startPlaying', desc: '', args: []);
   }
 
   /// `أقل عدد لاعبين للبدء هو 3. تقدر تضيف لاعبين وتعدّل أسمائهم تحت.`
@@ -142,12 +146,7 @@ class AppLocalization {
 
   /// `إضافة لاعب`
   String get addNewPlayer {
-    return Intl.message(
-      'إضافة لاعب',
-      name: 'addNewPlayer',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('إضافة لاعب', name: 'addNewPlayer', desc: '', args: []);
   }
 
   /// `تعديل اسم اللاعب`
@@ -172,52 +171,27 @@ class AppLocalization {
 
   /// `إضافة`
   String get addAction {
-    return Intl.message(
-      'إضافة',
-      name: 'addAction',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('إضافة', name: 'addAction', desc: '', args: []);
   }
 
   /// `تعديل`
   String get editAction {
-    return Intl.message(
-      'تعديل',
-      name: 'editAction',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('تعديل', name: 'editAction', desc: '', args: []);
   }
 
   /// `لاعب 1`
   String get player1 {
-    return Intl.message(
-      'لاعب 1',
-      name: 'player1',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('لاعب 1', name: 'player1', desc: '', args: []);
   }
 
   /// `لاعب 2`
   String get player2 {
-    return Intl.message(
-      'لاعب 2',
-      name: 'player2',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('لاعب 2', name: 'player2', desc: '', args: []);
   }
 
   /// `لاعب 3`
   String get player3 {
-    return Intl.message(
-      'لاعب 3',
-      name: 'player3',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('لاعب 3', name: 'player3', desc: '', args: []);
   }
 
   /// `اعطوا الجوال ل`
@@ -272,22 +246,12 @@ class AppLocalization {
 
   /// `اسأل`
   String get ask {
-    return Intl.message(
-      'اسأل',
-      name: 'ask',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('اسأل', name: 'ask', desc: '', args: []);
   }
 
   /// `وقت التصويت`
   String get votingTime {
-    return Intl.message(
-      'وقت التصويت',
-      name: 'votingTime',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('وقت التصويت', name: 'votingTime', desc: '', args: []);
   }
 
   /// `الجاسوس هو...`
@@ -302,12 +266,7 @@ class AppLocalization {
 
   /// `التالي`
   String get next {
-    return Intl.message(
-      'التالي',
-      name: 'next',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('التالي', name: 'next', desc: '', args: []);
   }
 
   /// `سلم الجوال للجاسوس`
@@ -342,22 +301,12 @@ class AppLocalization {
 
   /// `النتائج`
   String get results {
-    return Intl.message(
-      'النتائج',
-      name: 'results',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('النتائج', name: 'results', desc: '', args: []);
   }
 
   /// `فتح`
   String get unlock {
-    return Intl.message(
-      'فتح',
-      name: 'unlock',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('فتح', name: 'unlock', desc: '', args: []);
   }
 
   /// `هالتصنيف يحتاج {coins} عملة عشان تفتحه.`
@@ -392,42 +341,22 @@ class AppLocalization {
 
   /// `معك:`
   String get youHave {
-    return Intl.message(
-      'معك:',
-      name: 'youHave',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('معك:', name: 'youHave', desc: '', args: []);
   }
 
   /// `عملة`
   String get coins {
-    return Intl.message(
-      'عملة',
-      name: 'coins',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('عملة', name: 'coins', desc: '', args: []);
   }
 
   /// `يمكن لاحقاً`
   String get maybeLater {
-    return Intl.message(
-      'يمكن لاحقاً',
-      name: 'maybeLater',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('يمكن لاحقاً', name: 'maybeLater', desc: '', args: []);
   }
 
   /// `تم بنجاح`
   String get success {
-    return Intl.message(
-      'تم بنجاح',
-      name: 'success',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('تم بنجاح', name: 'success', desc: '', args: []);
   }
 
   /// `تم فتح التصنيف بنجاح!`
@@ -452,12 +381,7 @@ class AppLocalization {
 
   /// `صار خطأ`
   String get error {
-    return Intl.message(
-      'صار خطأ',
-      name: 'error',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('صار خطأ', name: 'error', desc: '', args: []);
   }
 
   /// `ما قدرنا نفتح التصنيف`
@@ -482,22 +406,12 @@ class AppLocalization {
 
   /// `افتح الآن`
   String get unlockNow {
-    return Intl.message(
-      'افتح الآن',
-      name: 'unlockNow',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('افتح الآن', name: 'unlockNow', desc: '', args: []);
   }
 
   /// `استأجر الآن`
   String get rentNow {
-    return Intl.message(
-      'استأجر الآن',
-      name: 'rentNow',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('استأجر الآن', name: 'rentNow', desc: '', args: []);
   }
 
   /// `شاهد إعلان (+{coins} عملة)`
@@ -512,22 +426,12 @@ class AppLocalization {
 
   /// `التكلفة`
   String get cost {
-    return Intl.message(
-      'التكلفة',
-      name: 'cost',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('التكلفة', name: 'cost', desc: '', args: []);
   }
 
   /// `رصيدك`
   String get yourBalance {
-    return Intl.message(
-      'رصيدك',
-      name: 'yourBalance',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('رصيدك', name: 'yourBalance', desc: '', args: []);
   }
 
   /// `متاح لمدة ساعتين`
@@ -552,22 +456,12 @@ class AppLocalization {
 
   /// `استئجار لمدة`
   String get rentFor {
-    return Intl.message(
-      'استئجار لمدة',
-      name: 'rentFor',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('استئجار لمدة', name: 'rentFor', desc: '', args: []);
   }
 
   /// `ساعتين`
   String get hours24 {
-    return Intl.message(
-      'ساعتين',
-      name: 'hours24',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('ساعتين', name: 'hours24', desc: '', args: []);
   }
 
   /// `استئجار ساعتين`
@@ -592,12 +486,7 @@ class AppLocalization {
 
   /// `الإعدادات`
   String get settings {
-    return Intl.message(
-      'الإعدادات',
-      name: 'settings',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('الإعدادات', name: 'settings', desc: '', args: []);
   }
 
   /// `إزالة الإعلانات`
@@ -712,112 +601,57 @@ class AppLocalization {
 
   /// `موافق`
   String get ok {
-    return Intl.message(
-      'موافق',
-      name: 'ok',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('موافق', name: 'ok', desc: '', args: []);
   }
 
   /// `إلغاء`
   String get cancel {
-    return Intl.message(
-      'إلغاء',
-      name: 'cancel',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('إلغاء', name: 'cancel', desc: '', args: []);
   }
 
   /// `تأكيد`
   String get confirm {
-    return Intl.message(
-      'تأكيد',
-      name: 'confirm',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('تأكيد', name: 'confirm', desc: '', args: []);
   }
 
   /// `مفعل`
   String get activated {
-    return Intl.message(
-      'مفعل',
-      name: 'activated',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('مفعل', name: 'activated', desc: '', args: []);
   }
 
   /// `معلومات التطبيق`
   String get appInfo {
-    return Intl.message(
-      'معلومات التطبيق',
-      name: 'appInfo',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('معلومات التطبيق', name: 'appInfo', desc: '', args: []);
   }
 
   /// `الدعم`
   String get support {
-    return Intl.message(
-      'الدعم',
-      name: 'support',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('الدعم', name: 'support', desc: '', args: []);
   }
 
   /// `تواصل معنا`
   String get contact {
-    return Intl.message(
-      'تواصل معنا',
-      name: 'contact',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('تواصل معنا', name: 'contact', desc: '', args: []);
   }
 
   /// `قيّم التطبيق`
   String get rateApp {
-    return Intl.message(
-      'قيّم التطبيق',
-      name: 'rateApp',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('قيّم التطبيق', name: 'rateApp', desc: '', args: []);
   }
 
   /// `شارك التطبيق`
   String get shareApp {
-    return Intl.message(
-      'شارك التطبيق',
-      name: 'shareApp',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('شارك التطبيق', name: 'shareApp', desc: '', args: []);
   }
 
   /// `البريد الإلكتروني`
   String get email {
-    return Intl.message(
-      'البريد الإلكتروني',
-      name: 'email',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('البريد الإلكتروني', name: 'email', desc: '', args: []);
   }
 
   /// `الموقع`
   String get website {
-    return Intl.message(
-      'الموقع',
-      name: 'website',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('الموقع', name: 'website', desc: '', args: []);
   }
 
   /// `جاري الاستعادة...`
@@ -872,12 +706,7 @@ class AppLocalization {
 
   /// `دعم بسيط`
   String get donationSmall {
-    return Intl.message(
-      'دعم بسيط',
-      name: 'donationSmall',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('دعم بسيط', name: 'donationSmall', desc: '', args: []);
   }
 
   /// `دعم متوسط`
@@ -892,12 +721,7 @@ class AppLocalization {
 
   /// `دعم كبير`
   String get donationLarge {
-    return Intl.message(
-      'دعم كبير',
-      name: 'donationLarge',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('دعم كبير', name: 'donationLarge', desc: '', args: []);
   }
 
   /// `إجمالي الدعم`
@@ -912,12 +736,7 @@ class AppLocalization {
 
   /// `اللغة`
   String get language {
-    return Intl.message(
-      'اللغة',
-      name: 'language',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('اللغة', name: 'language', desc: '', args: []);
   }
 
   /// `اختر لغة التطبيق`
@@ -932,52 +751,27 @@ class AppLocalization {
 
   /// `العربية`
   String get arabic {
-    return Intl.message(
-      'العربية',
-      name: 'arabic',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('العربية', name: 'arabic', desc: '', args: []);
   }
 
   /// `English`
   String get english {
-    return Intl.message(
-      'English',
-      name: 'english',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('English', name: 'english', desc: '', args: []);
   }
 
   /// `عام`
   String get general {
-    return Intl.message(
-      'عام',
-      name: 'general',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('عام', name: 'general', desc: '', args: []);
   }
 
   /// `بريميوم`
   String get premium {
-    return Intl.message(
-      'بريميوم',
-      name: 'premium',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('بريميوم', name: 'premium', desc: '', args: []);
   }
 
   /// `اضغط للقراءة`
   String get tapToRead {
-    return Intl.message(
-      'اضغط للقراءة',
-      name: 'tapToRead',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('اضغط للقراءة', name: 'tapToRead', desc: '', args: []);
   }
 
   /// `اضغط التالي حتى تعرف هل أنت الجاسوس أو لا، ولا تخلي أحد يشوف شاشتك!`

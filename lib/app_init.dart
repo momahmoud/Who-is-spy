@@ -58,7 +58,5 @@ class AppInit {
     );
 
     Get.put<AdsService>(AdsService(di<BaseDatabase>()), permanent: true);
-
-    await NotificationService.instance.handleAppLaunch();
   }
 }
