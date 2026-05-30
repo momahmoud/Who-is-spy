@@ -54,6 +54,7 @@ class _BarrahAlsalfahMobileAppState extends State<BarrahAlsalfahMobileApp>
         break;
       case AppLifecycleState.resumed:
         _foregroundStarted = DateTime.now();
+        unawaited(NotificationService.instance.handleAppLaunch());
         break;
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:

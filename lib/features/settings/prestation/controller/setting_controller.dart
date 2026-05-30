@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:salfah/core/const/const_strings.dart';
 import 'package:salfah/core/const/database_constants.dart';
 import 'package:salfah/core/di/index.dart';
 import 'package:salfah/core/infrastructure/local_data_base/base_local_data_base.dart';
 import 'package:salfah/features/home/presentation/controller/home_controller.dart';
+import 'package:salfah/features/notifications/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,5 +43,6 @@ class LocalizationController extends GetxController {
     if (Get.isRegistered<HomeController>()) {
       Get.find<HomeController>().refreshCategories();
     }
+    unawaited(NotificationService.instance.handleAppLaunch());
   }
 }

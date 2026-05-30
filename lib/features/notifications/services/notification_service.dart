@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:salfah/features/notifications/services/notification_copy.dart';
+import 'package:salfah/features/notifications/services/notification_settings_platform.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -29,9 +31,6 @@ class NotificationService {
   static const int _inactive72hNotificationId = 103;
 
   static const String _channelId = 'smart_engagement_channel';
-  static const String _channelName = 'Smart Engagement';
-  static const String _channelDescription =
-      'Daily and inactivity engagement notifications';
 
   static const int _dailyHour = 20;
   static const int _jitterMinutes = 30;
@@ -43,33 +42,14 @@ class NotificationService {
   bool get _supportsLocalNotifications =>
       !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
-  final Map<NotificationType, List<String>> _messagesByType =
-      <NotificationType, List<String>>{
-        NotificationType.dailyReminder: <String>[
-          '😏 مين فيكم الجاسوس؟',
-          '😏 Who is the spy today?',
-          '🔥 جاهز لجولة سريعة؟',
-          '🔥 Ready for a quick round?',
-        ],
-        NotificationType.funSocial: <String>[
-          '👀 في حد بيكدب… تعال اكتشفه',
-          '👀 Someone is lying… find them!',
-          '😂 اللعبة مش ممتعة من غيرك',
-          '😂 The game is not fun without you',
-        ],
-        NotificationType.comebackEmotional: <String>[
-          '😱 شكلك أنت الجاسوس!',
-          '😱 You might be the spy!',
-          'أصحابك مستنيينك… الجولة ناقصها واحد',
-          'Your friends are waiting... one player is missing',
-        ],
-        NotificationType.challengeMessage: <String>[
-          'التحدي مستنيك اليوم… تقدر تكشف الجاسوس؟',
-          'A challenge awaits... can you expose the spy?',
-          'رجعتك تعني جولة أمتع للجميع',
-          'Your comeback makes every round better',
-        ],
-      };
+  String _channelName = '';
+  String _channelDescription = '';
+
+  Future<void> openAppNotificationSettings() =>
+      NotificationSettingsPlatform.openAppNotificationSettings();
+
+  Future<void> openBatteryOptimizationSettings() =>
+      NotificationSettingsPlatform.openBatteryOptimizationSettings();
 
   Future<void> _configureLocalTimeZone() async {
     tzdata.initializeTimeZones();
@@ -103,22 +83,29 @@ class NotificationService {
     );
 
     await _plugin.initialize(settings: initSettings);
+  }
 
-    if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-          _plugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-
-      await androidPlugin?.createNotificationChannel(
-        const AndroidNotificationChannel(
-          _channelId,
-          _channelName,
-          description: _channelDescription,
-          importance: Importance.high,
-          playSound: true,
-        ),
-      );
+  Future<void> _ensureNotificationChannel() async {
+    if (!Platform.isAndroid) {
+      return;
     }
+
+    _channelName = await NotificationCopy.channelName();
+    _channelDescription = await NotificationCopy.channelDescription();
+
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+        _plugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    await androidPlugin?.createNotificationChannel(
+      AndroidNotificationChannel(
+        _channelId,
+        _channelName,
+        description: _channelDescription,
+        importance: Importance.high,
+        playSound: true,
+      ),
+    );
   }
 
   /// Runs after the first frame so Android has an [Activity] for the
@@ -199,6 +186,7 @@ class NotificationService {
     }
 
     await updateLastOpenTime();
+    await _ensureNotificationChannel();
     await _cancelManagedNotifications();
     await scheduleDailyNotification();
     await scheduleInactiveNotification();
@@ -245,7 +233,7 @@ class NotificationService {
 
     await _scheduleZoned(
       id: _dailyNotificationId,
-      title: _titleForType(NotificationType.dailyReminder),
+      title: await NotificationCopy.titleFor(NotificationType.dailyReminder),
       body: message,
       scheduledDateTime: _withRandomJitter(target),
     );
@@ -260,7 +248,7 @@ class NotificationService {
 
     await _scheduleZoned(
       id: _inactive24hNotificationId,
-      title: _titleForType(NotificationType.funSocial),
+      title: await NotificationCopy.titleFor(NotificationType.funSocial),
       body: await getRandomMessage(NotificationType.funSocial),
       scheduledDateTime:
           _withRandomJitter(now.add(const Duration(hours: 24))),
@@ -268,7 +256,9 @@ class NotificationService {
 
     await _scheduleZoned(
       id: _inactive48hNotificationId,
-      title: _titleForType(NotificationType.comebackEmotional),
+      title: await NotificationCopy.titleFor(
+        NotificationType.comebackEmotional,
+      ),
       body: await getRandomMessage(NotificationType.comebackEmotional),
       scheduledDateTime:
           _withRandomJitter(now.add(const Duration(hours: 48))),
@@ -276,7 +266,9 @@ class NotificationService {
 
     await _scheduleZoned(
       id: _inactive72hNotificationId,
-      title: _titleForType(NotificationType.challengeMessage),
+      title: await NotificationCopy.titleFor(
+        NotificationType.challengeMessage,
+      ),
       body: await getRandomMessage(NotificationType.challengeMessage),
       scheduledDateTime:
           _withRandomJitter(now.add(const Duration(hours: 72))),
@@ -284,7 +276,7 @@ class NotificationService {
   }
 
   Future<String> getRandomMessage(NotificationType type) async {
-    final List<String> pool = _messagesByType[type] ?? <String>[];
+    final List<String> pool = await NotificationCopy.bodiesFor(type);
     if (pool.isEmpty) {
       return '';
     }
@@ -315,9 +307,12 @@ class NotificationService {
     }
 
     final String resolvedBody = body ?? await getRandomMessage(type);
+    if (_channelName.isEmpty) {
+      await _ensureNotificationChannel();
+    }
     await _plugin.show(
       id: 999,
-      title: title ?? _titleForType(type),
+      title: title ?? await NotificationCopy.titleFor(type),
       body: resolvedBody,
       notificationDetails: _notificationDetails(),
     );
@@ -336,6 +331,10 @@ class NotificationService {
     required String body,
     required DateTime scheduledDateTime,
   }) async {
+    if (_channelName.isEmpty) {
+      await _ensureNotificationChannel();
+    }
+
     await _plugin.zonedSchedule(
       id: id,
       title: title,
@@ -348,7 +347,7 @@ class NotificationService {
 
   NotificationDetails _notificationDetails() {
     return NotificationDetails(
-      android: const AndroidNotificationDetails(
+      android: AndroidNotificationDetails(
         _channelId,
         _channelName,
         channelDescription: _channelDescription,
@@ -362,19 +361,6 @@ class NotificationService {
         presentSound: true,
       ),
     );
-  }
-
-  String _titleForType(NotificationType type) {
-    switch (type) {
-      case NotificationType.dailyReminder:
-        return 'وقت اللعب';
-      case NotificationType.funSocial:
-        return 'الجولة بدأت!';
-      case NotificationType.comebackEmotional:
-        return 'اشتقنالك';
-      case NotificationType.challengeMessage:
-        return 'تحدي جديد';
-    }
   }
 
   DateTime _withRandomJitter(DateTime base) {

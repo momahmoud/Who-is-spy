@@ -1,12 +1,17 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/features/intro/presentation/dialogs/about_app_alert_dialog.dart';
+import 'package:salfah/features/notifications/services/notification_service.dart';
 import 'package:salfah/features/settings/presentation/controller/settings_controller.dart';
 import 'package:salfah/features/settings/presentation/widgets/donation_options_dialog.dart';
 import 'package:salfah/features/settings/presentation/widgets/how_to_play_dialog.dart';
 import 'package:salfah/features/settings/presentation/widgets/setting_item_widget.dart';
 import 'package:salfah/features/settings/presentation/widgets/setting_section_widget.dart';
 import 'package:salfah/features/settings/services/purchase_service.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -30,6 +35,7 @@ class SettingsBody extends StatelessWidget {
           children: <Widget>[
             _buildAppInfoCard(context),
             _buildGeneralSection(context),
+            _buildNotificationsSection(context),
             _buildPremiumSection(context, ctrl),
             _buildSupportSection(context, ctrl),
             _buildContactSection(context, ctrl),
@@ -202,6 +208,54 @@ class SettingsBody extends StatelessWidget {
               child: FadeTransition(opacity: anim1, child: child),
             );
           },
+    );
+  }
+
+  Widget _buildNotificationsSection(BuildContext context) {
+    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+      return const SizedBox.shrink();
+    }
+
+    final NotificationService notifications = NotificationService.instance;
+    final List<Widget> items = <Widget>[
+      SettingItemWidget(
+        icon: Icons.notifications_active_rounded,
+        title: context.localization.notificationOpenAppSettings,
+        subtitle: context.localization.notificationOpenAppSettingsSubtitle,
+        iconColor: AppColors.color2,
+        onTap: () => unawaited(notifications.openAppNotificationSettings()),
+      ),
+    ];
+
+    if (Platform.isAndroid) {
+      items.add(
+        SettingItemWidget(
+          icon: Icons.battery_charging_full_rounded,
+          title: context.localization.notificationOpenBattery,
+          subtitle: context.localization.notificationOpenBatterySubtitle,
+          iconColor: AppColors.color4,
+          onTap: () =>
+              unawaited(notifications.openBatteryOptimizationSettings()),
+        ),
+      );
+    }
+
+    items.add(
+      SettingItemWidget(
+        icon: Icons.refresh_rounded,
+        title: context.localization.notificationRefreshSchedules,
+        subtitle: context.localization.notificationRefreshSchedulesSubtitle,
+        iconColor: AppColors.color3,
+        onTap: () => unawaited(notifications.handleAppLaunch()),
+        showBorder: false,
+      ),
+    );
+
+    return SettingSectionWidget(
+      icon: Icons.notifications_outlined,
+      title: context.localization.notificationsSectionTitle,
+      iconColor: AppColors.color2,
+      children: items,
     );
   }
 
