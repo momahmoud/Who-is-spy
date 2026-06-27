@@ -38,9 +38,7 @@ class RoleWidget extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isOutside
-                      ? Icons.block_rounded
-                      : Icons.check_circle_rounded,
+                  isOutside ? Icons.block_rounded : Icons.check_circle_rounded,
                   size: 60.w,
                   color: Colors.white,
                 ),

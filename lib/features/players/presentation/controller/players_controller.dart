@@ -8,6 +8,7 @@ import 'package:salfah/core/helpers/app_helper_functions.dart';
 import 'package:salfah/core/localization/localization.dart';
 import 'package:salfah/core/utilities/app_logger.dart';
 import 'package:salfah/features/ads/presentation/controller/coins_controller.dart';
+import 'package:salfah/features/ads/services/ads_service.dart';
 import 'package:salfah/features/monetization/services/monetization_bonus_service.dart';
 import 'package:salfah/features/players/presentation/dialogs/add_edit_dialog.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class PlayersController extends GetxController {
 
   final String selectedCategory = Get.arguments as String;
   bool isLoading = true;
+  bool isStartingGame = false;
 
   final Map<int, String> players = <int, String>{
     1: Get.context!.localization.player1,
@@ -33,11 +35,13 @@ class PlayersController extends GetxController {
 
   final Random _random = Random();
   final CoinsController coinsController = Get.find<CoinsController>();
+  final AdsService _adsService = Get.find<AdsService>();
 
   @override
   void onInit() {
     super.onInit();
     AppLogger().info('Selected Category is $selectedCategory');
+    _adsService.preloadInterstitial();
     _init();
   }
 
@@ -103,6 +107,8 @@ class PlayersController extends GetxController {
   }
 
   Future<void> startGame() async {
+    if (isStartingGame) return;
+
     if (players.length < 3) {
       Get.snackbar(
         Get.context!.localization.error,
@@ -117,25 +123,31 @@ class PlayersController extends GetxController {
       return;
     }
 
-    unawaited(
-      MonetizationBonusService.maybeAwardLobbyPlayerCountBonus(
-        seatedPlayerCount: players.length,
-      ),
-    );
+    isStartingGame = true;
+    update();
 
-    final String item = getRandomItem();
-    final String outsidePlayer = getRandomPlayer();
+    try {
+      unawaited(
+        MonetizationBonusService.maybeAwardLobbyPlayerCountBonus(
+          seatedPlayerCount: players.length,
+        ),
+      );
 
-    final Map<String, int> playersWithScore = <String, int>{
-      for (final MapEntry<int, String> entry in players.entries) entry.value: 0,
-    };
+      await _adsService.showInterstitial(policyCooldownOnly: true);
 
-    AppLogger().info('Item: $item');
-    AppLogger().info('Outside Player: $outsidePlayer');
-    AppLogger().info('Players: $playersWithScore');
+      final String item = getRandomItem();
+      final String outsidePlayer = getRandomPlayer();
 
-    unawaited(
-      Get.toNamed<void>(
+      final Map<String, int> playersWithScore = <String, int>{
+        for (final MapEntry<int, String> entry in players.entries)
+          entry.value: 0,
+      };
+
+      AppLogger().info('Item: $item');
+      AppLogger().info('Outside Player: $outsidePlayer');
+      AppLogger().info('Players: $playersWithScore');
+
+      await Get.toNamed<void>(
         RouteNames.gameRound,
         arguments: <String, Object>{
           'item': item,
@@ -143,8 +155,11 @@ class PlayersController extends GetxController {
           'players': playersWithScore,
           'outsidePlayer': outsidePlayer,
         },
-      ),
-    );
+      );
+    } finally {
+      isStartingGame = false;
+      update();
+    }
   }
 
   @override

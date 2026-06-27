@@ -820,6 +820,56 @@ class AppLocalization {
     );
   }
 
+  /// `جرّب ألعابنا`
+  String get tryOurGames {
+    return Intl.message(
+      'جرّب ألعابنا',
+      name: 'tryOurGames',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `اكتشف المزيد من ألعاب Fluxy`
+  String get tryOurGamesSubtitle {
+    return Intl.message(
+      'اكتشف المزيد من ألعاب Fluxy',
+      name: 'tryOurGamesSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `تصفّح الكل في المتجر`
+  String get tryOurGamesBrowseAll {
+    return Intl.message(
+      'تصفّح الكل في المتجر',
+      name: 'tryOurGamesBrowseAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `المزيد من الألعاب قريباً`
+  String get tryOurGamesComingSoon {
+    return Intl.message(
+      'المزيد من الألعاب قريباً',
+      name: 'tryOurGamesComingSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `حمّل`
+  String get tryOurGamesGet {
+    return Intl.message(
+      'حمّل',
+      name: 'tryOurGamesGet',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `البريد الإلكتروني`
   String get email {
     return Intl.message(

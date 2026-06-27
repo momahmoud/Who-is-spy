@@ -46,10 +46,16 @@ class AdsService extends GetxController {
   /// Shows an interstitial ad. Uses preloaded ad if available.
   /// Skips if user has purchased "Remove Ads" or [EconomyConfig.interstitialEnabled] is false.
   ///
-  /// [useInterstitialPolicy] — when `true` (default), also requires session/round count and
-  /// cooldown from [InterstitialPolicyService]. Set to `false` for round-finish "Next" so an
-  /// ad is attempted every time (like legacy `interstitialPerRound` behavior).
-  Future<void> showInterstitial({bool useInterstitialPolicy = true}) async {
+  /// [useInterstitialPolicy] — when `true` (default), applies frequency guardrails from
+  /// [InterstitialPolicyService]. Set to `false` for round-finish "Next" so an ad is
+  /// attempted every time (like legacy `interstitialPerRound` behavior).
+  ///
+  /// [policyCooldownOnly] — when `true` with [useInterstitialPolicy], only enforces the
+  /// cooldown timer (for placements before a round starts, e.g. player lobby).
+  Future<void> showInterstitial({
+    bool useInterstitialPolicy = true,
+    bool policyCooldownOnly = false,
+  }) async {
     if (_isShowingInterstitial) return;
     final String? v = _db.get<String>(
       tableName: DatabaseConstants.userDataTable,
@@ -60,9 +66,11 @@ class AdsService extends GetxController {
     final EconomyConfig econ = await EconomyConfig.load();
     if (!econ.interstitialEnabled) return;
 
-    if (useInterstitialPolicy &&
-        !await InterstitialPolicyService.canShow(econ)) {
-      return;
+    if (useInterstitialPolicy) {
+      final bool allowed = policyCooldownOnly
+          ? await InterstitialPolicyService.canShowWithCooldownOnly(econ)
+          : await InterstitialPolicyService.canShow(econ);
+      if (!allowed) return;
     }
 
     _isShowingInterstitial = true;

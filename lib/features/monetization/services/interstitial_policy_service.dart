@@ -30,16 +30,27 @@ abstract final class InterstitialPolicyService {
 
     if (rounds < config.interstitialPolicyMinRounds) return false;
 
-    final int? last = p.getInt(_lastShownMsKey);
-    if (last != null) {
-      final int delta =
-          DateTime.now().millisecondsSinceEpoch - last;
-      if (delta <
-          config.interstitialPolicyCooldownSeconds * 1000) {
-        return false;
-      }
-    }
-    return true;
+    return _isCooldownElapsed(p, config);
+  }
+
+  /// For pre-round placements (e.g. after choosing players). Skips session/round
+  /// gates but still respects cooldown so back-to-back interstitials are avoided.
+  static Future<bool> canShowWithCooldownOnly(EconomyConfig config) async {
+    if (!config.interstitialEnabled) return false;
+
+    final SharedPreferences p = await SharedPreferences.getInstance();
+    return _isCooldownElapsed(p, config);
+  }
+
+  static bool _isCooldownElapsed(
+    SharedPreferences prefs,
+    EconomyConfig config,
+  ) {
+    final int? last = prefs.getInt(_lastShownMsKey);
+    if (last == null) return true;
+
+    final int delta = DateTime.now().millisecondsSinceEpoch - last;
+    return delta >= config.interstitialPolicyCooldownSeconds * 1000;
   }
 
   static Future<void> markShownNow() async {

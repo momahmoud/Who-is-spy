@@ -66,8 +66,14 @@ class _HomeTopBar extends StatelessWidget {
             onTap: () => Get.toNamed<void>(RouteNames.settings),
           ),
 
-          // Coins
-          const CoinsCounterWidget(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const RemoveAdsBarButton(),
+              SizedBox(width: 8.w),
+              const CoinsCounterWidget(),
+            ],
+          ),
         ],
       ),
     );

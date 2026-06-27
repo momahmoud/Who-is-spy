@@ -48,17 +48,19 @@ class _BarrahAlsalfahMobileAppState extends State<BarrahAlsalfahMobileApp>
   );
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.resumed:
-        _foregroundStarted = DateTime.now();
-        unawaited(NotificationService.instance.handleAppLaunch());
-        break;
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
+        unawaited(NotificationService.instance.handleAppBackgrounded());
         final DateTime? start = _foregroundStarted;
         if (start != null) {
           final int secs = DateTime.now().difference(start).inSeconds;
@@ -69,6 +71,10 @@ class _BarrahAlsalfahMobileAppState extends State<BarrahAlsalfahMobileApp>
           }
           _foregroundStarted = null;
         }
+        break;
+      case AppLifecycleState.resumed:
+        _foregroundStarted = DateTime.now();
+        unawaited(NotificationService.instance.handleAppForegrounded());
         break;
     }
   }

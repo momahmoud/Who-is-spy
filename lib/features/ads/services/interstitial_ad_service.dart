@@ -73,14 +73,48 @@ class InterstitialAdService {
     return completer.future;
   }
 
-  /// Returns true if a full-screen presentation was started.
+  /// Returns true if a full-screen presentation was started and dismissed (or failed).
   Future<bool> show() async {
     if (_isShowing) return false;
     if (_ad == null) return false;
 
+    final InterstitialAd ad = _ad!;
+    final Completer<bool> finished = Completer<bool>();
+
+    ad.fullScreenContentCallback =
+        FullScreenContentCallback<InterstitialAd>(
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        unawaited(RatingPromptService.instance.recordAdShown());
+      },
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+        _ad = null;
+        _isLoaded = false;
+        _isShowing = false;
+        unawaited(load());
+        if (!finished.isCompleted) finished.complete(true);
+      },
+      onAdFailedToShowFullScreenContent:
+          (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        _ad = null;
+        _isLoaded = false;
+        _isShowing = false;
+        unawaited(load());
+        if (!finished.isCompleted) finished.complete(false);
+      },
+    );
+
     _isShowing = true;
-    await _ad!.show();
-    return true;
+    try {
+      await ad.show();
+    } catch (_) {
+      _isShowing = false;
+      if (!finished.isCompleted) finished.complete(false);
+      return false;
+    }
+
+    return finished.future;
   }
 
   /// Loads and shows one interstitial. Does not throw if load fails.

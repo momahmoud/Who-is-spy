@@ -1,5 +1,6 @@
 import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/localization/localization.dart';
+import 'package:salfah/core/widgets/try_our_games_sheet.dart';
 import 'package:salfah/features/home/data/models/category_model.dart';
 import 'package:salfah/features/home/presentation/controller/home_controller.dart';
 import 'package:salfah/features/home/presentation/widgets/home_widgets/index.dart';
@@ -54,6 +55,7 @@ class ContentWidget extends StatelessWidget {
                       categories: unlocked,
                       controller: controller,
                       startIndex: 0,
+                      includeTryOurGamesTile: true,
                     ),
                     if (locked.isNotEmpty) ...<Widget>[
                       SizedBox(height: 32.h),
@@ -64,7 +66,7 @@ class ContentWidget extends StatelessWidget {
                       _CategoryGrid(
                         categories: locked,
                         controller: controller,
-                        startIndex: unlocked.length,
+                        startIndex: unlocked.length + 1,
                       ),
                     ],
                   ],
@@ -180,14 +182,18 @@ class _CategoryGrid extends StatelessWidget {
     required this.categories,
     required this.controller,
     required this.startIndex,
+    this.includeTryOurGamesTile = false,
   });
 
   final List<CategoryModel> categories;
   final HomeController controller;
   final int startIndex;
+  final bool includeTryOurGamesTile;
 
   @override
   Widget build(BuildContext context) {
+    final int promoCount = includeTryOurGamesTile ? 1 : 0;
+
     return AnimationLimiter(
       child: GridView.builder(
         shrinkWrap: true,
@@ -199,8 +205,25 @@ class _CategoryGrid extends StatelessWidget {
           mainAxisSpacing: 14.h,
           childAspectRatio: 0.82,
         ),
-        itemCount: categories.length,
+        itemCount: categories.length + promoCount,
         itemBuilder: (BuildContext context, int index) {
+          if (includeTryOurGamesTile && index == categories.length) {
+            return AnimationConfiguration.staggeredGrid(
+              position: startIndex + index,
+              duration: const Duration(milliseconds: 450),
+              columnCount: 2,
+              child: ScaleAnimation(
+                scale: 0.85,
+                curve: Curves.easeOutBack,
+                child: FadeInAnimation(
+                  child: TryOurGamesGridTile(
+                    borderRadius: 22.r,
+                  ),
+                ),
+              ),
+            );
+          }
+
           final CategoryModel category = categories[index];
           return AnimationConfiguration.staggeredGrid(
             position: startIndex + index,

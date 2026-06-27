@@ -310,6 +310,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("The Spy is..."),
         "totalDonations":
             MessageLookupByLibrary.simpleMessage("Total Donations"),
+        "tryOurGames": MessageLookupByLibrary.simpleMessage("Try our games"),
+        "tryOurGamesBrowseAll":
+            MessageLookupByLibrary.simpleMessage("Browse all on Store"),
+        "tryOurGamesComingSoon":
+            MessageLookupByLibrary.simpleMessage("More games coming soon"),
+        "tryOurGamesGet": MessageLookupByLibrary.simpleMessage("Get"),
+        "tryOurGamesSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Discover more games from Fluxy"),
         "understood": MessageLookupByLibrary.simpleMessage("Understood"),
         "unlock": MessageLookupByLibrary.simpleMessage("Unlock"),
         "unlockCategoryMessage": m12,

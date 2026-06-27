@@ -16,4 +16,5 @@ class AppImages {
   static const String world = '$_basePath/world.jpg';
   static const String coin = '$_basePath/coins.svg';
   static const String twoCoins = '$_basePath/coins.svg';
+  static const String noAds = '$_basePath/no_ads.png';
 }

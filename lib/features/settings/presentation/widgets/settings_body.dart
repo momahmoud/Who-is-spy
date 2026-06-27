@@ -246,7 +246,7 @@ class SettingsBody extends StatelessWidget {
         title: context.localization.notificationRefreshSchedules,
         subtitle: context.localization.notificationRefreshSchedulesSubtitle,
         iconColor: AppColors.color3,
-        onTap: () => unawaited(notifications.handleAppLaunch()),
+        onTap: () => unawaited(notifications.rescheduleEngagementNotifications()),
         showBorder: false,
       ),
     );

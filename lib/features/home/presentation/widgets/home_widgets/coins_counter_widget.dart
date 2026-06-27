@@ -14,7 +14,7 @@ class CoinsCounterWidget extends StatelessWidget {
     return GetBuilder<CoinsController>(
       builder: (CoinsController controller) {
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: <Color>[AppColors.primary2, AppColors.primary1],
@@ -37,7 +37,12 @@ class CoinsCounterWidget extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              SvgPicture.asset(AppImages.coin, width: 30.w, height: 30.h),
+              SvgPicture.asset(
+                AppImages.coin,
+                width: 25.h,
+                height: 25.h,
+                fit: BoxFit.contain,
+              ),
               SizedBox(width: 8.w),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),

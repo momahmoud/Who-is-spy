@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:salfah/features/notifications/services/notification_copy.dart';
 import 'package:salfah/features/notifications/services/notification_settings_platform.dart';
-import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 enum NotificationType {
@@ -109,7 +109,7 @@ class NotificationService {
   }
 
   /// Runs after the first frame so Android has an [Activity] for the
-  /// notification permission prompt, then schedules engagement notifications.
+  /// notification permission prompt.
   Future<void> ensurePermissionsAndScheduleEngagementNotifications() async {
     if (!_supportsLocalNotifications) {
       return;
@@ -126,8 +126,32 @@ class NotificationService {
               IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(alert: true, badge: true, sound: true);
     }
+  }
 
-    await handleAppLaunch();
+  /// Returns whether the OS allows showing notifications for this app.
+  Future<bool> areNotificationsEnabled() async {
+    if (!_supportsLocalNotifications) {
+      return false;
+    }
+
+    if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? android =
+          _plugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      return await android?.areNotificationsEnabled() ?? false;
+    }
+
+    if (Platform.isIOS) {
+      final IOSFlutterLocalNotificationsPlugin? ios =
+          _plugin.resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      final NotificationsEnabledOptions? opts = await ios?.checkPermissions();
+      return opts != null &&
+          (opts.isEnabled || opts.isProvisionalEnabled) &&
+          opts.isAlertEnabled;
+    }
+
+    return false;
   }
 
   /// Prompts for notification permission when the OS reports it is not granted
@@ -149,8 +173,8 @@ class NotificationService {
         return;
       }
       await android.requestNotificationsPermission();
-      if (await android.areNotificationsEnabled() == true) {
-        await handleAppLaunch();
+      if (await areNotificationsEnabled()) {
+        await rescheduleEngagementNotifications();
       }
       return;
     }
@@ -175,17 +199,69 @@ class NotificationService {
         sound: true,
       );
       if (accepted == true) {
-        await handleAppLaunch();
+        await rescheduleEngagementNotifications();
       }
     }
   }
 
-  Future<void> handleAppLaunch() async {
+  /// App returned to foreground — record open time and cancel pending reminders.
+  Future<void> handleAppForegrounded() async {
     if (!_supportsLocalNotifications) {
       return;
     }
 
+    _backgroundScheduleInFlight = false;
     await updateLastOpenTime();
+    await _cancelManagedNotifications();
+  }
+
+  bool _backgroundScheduleInFlight = false;
+  DateTime? _lastBackgroundScheduleAt;
+
+  /// App went to background — schedule reminders if notifications are allowed.
+  Future<void> handleAppBackgrounded() async {
+    if (!_supportsLocalNotifications) {
+      return;
+    }
+    if (_backgroundScheduleInFlight) return;
+    final last = _lastBackgroundScheduleAt;
+    if (last != null && DateTime.now().difference(last).inSeconds < 2) {
+      return;
+    }
+
+    if (!await areNotificationsEnabled()) {
+      debugPrint(
+        'NotificationService: skipping schedule — OS permission denied',
+      );
+      return;
+    }
+
+    _backgroundScheduleInFlight = true;
+    try {
+      await _ensureNotificationChannel();
+      await _cancelManagedNotifications();
+      await scheduleDailyNotification();
+      await scheduleInactiveNotification();
+      _lastBackgroundScheduleAt = DateTime.now();
+    } finally {
+      _backgroundScheduleInFlight = false;
+    }
+  }
+
+  /// Manual refresh (settings) or after language change while app is open.
+  Future<void> handleAppLaunch() async {
+    await updateLastOpenTime();
+    await rescheduleEngagementNotifications();
+  }
+
+  Future<void> rescheduleEngagementNotifications() async {
+    if (!_supportsLocalNotifications) {
+      return;
+    }
+    if (!await areNotificationsEnabled()) {
+      return;
+    }
+
     await _ensureNotificationChannel();
     await _cancelManagedNotifications();
     await scheduleDailyNotification();
@@ -335,14 +411,19 @@ class NotificationService {
       await _ensureNotificationChannel();
     }
 
-    await _plugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(scheduledDateTime, tz.local),
-      notificationDetails: _notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-    );
+    try {
+      await _plugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tz.TZDateTime.from(scheduledDateTime, tz.local),
+        notificationDetails: _notificationDetails(),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+    } catch (error, stackTrace) {
+      debugPrint('NotificationService: schedule id=$id failed: $error');
+      debugPrint('$stackTrace');
+    }
   }
 
   NotificationDetails _notificationDetails() {

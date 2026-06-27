@@ -302,6 +302,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "theOneOutsideStoryIs":
             MessageLookupByLibrary.simpleMessage("الجاسوس هو..."),
         "totalDonations": MessageLookupByLibrary.simpleMessage("إجمالي الدعم"),
+        "tryOurGames": MessageLookupByLibrary.simpleMessage("جرّب ألعابنا"),
+        "tryOurGamesBrowseAll":
+            MessageLookupByLibrary.simpleMessage("تصفّح الكل في المتجر"),
+        "tryOurGamesComingSoon":
+            MessageLookupByLibrary.simpleMessage("المزيد من الألعاب قريباً"),
+        "tryOurGamesGet": MessageLookupByLibrary.simpleMessage("حمّل"),
+        "tryOurGamesSubtitle":
+            MessageLookupByLibrary.simpleMessage("اكتشف المزيد من ألعاب Fluxy"),
         "understood": MessageLookupByLibrary.simpleMessage("تمام"),
         "unlock": MessageLookupByLibrary.simpleMessage("فتح"),
         "unlockCategoryMessage": m12,

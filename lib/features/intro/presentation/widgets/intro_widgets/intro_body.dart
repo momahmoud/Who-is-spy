@@ -3,7 +3,9 @@ import 'package:salfah/config/theme/app_colors.dart';
 import 'package:salfah/core/assets/app_images.dart';
 import 'package:salfah/core/common_widgets/animated_play_button.dart';
 import 'package:salfah/core/common_widgets/background_image_widget.dart';
+import 'package:salfah/core/const/const_strings.dart';
 import 'package:salfah/core/localization/localization.dart';
+import 'package:salfah/core/widgets/try_our_games_sheet.dart';
 import 'package:salfah/features/intro/presentation/dialogs/about_app_alert_dialog.dart';
 import 'package:salfah/features/settings/presentation/widgets/how_to_play_dialog.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +122,12 @@ class _IntroBodyState extends State<IntroBody>
                                 Colors.white.withValues(alpha: 0.55),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 16.h),
+                      TryOurGamesIntroButton(
+                        glowAnimation: _glowAnimation,
+                        languageCode:
+                            Get.locale?.languageCode ?? AppStrings.arabicLang,
                       ),
                     ],
                   ),

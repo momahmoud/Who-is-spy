@@ -14,7 +14,7 @@
       "interstitial_policy": {
         "min_sessions_before_first_interstitial": 2,
         "min_rounds_since_install": 2,
-        "cooldown_seconds_between_interstitials": 120
+        "cooldown_seconds_between_interstitials": 40
       },
 
       "hints": {
